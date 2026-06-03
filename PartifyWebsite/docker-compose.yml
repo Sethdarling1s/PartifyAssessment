@@ -1,9 +1,12 @@
 services:
-  web: 
+  web:
     build:
-      target: builder
-    # flask requires SIGINT to stop gracefully
-    # (default stop signal from Compose is SIGTERM)
-    stop_signal: SIGINT
+      context: .
+      target: development
+    environment:
+      - FLASK_ENV=development
     ports:
-      - '8080:8080'
+      - "8080:8080"
+    volumes:
+      - .:/app
+    stop_signal: SIGINT

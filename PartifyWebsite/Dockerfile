@@ -1,27 +1,30 @@
-# syntax=docker/dockerfile:1.4
+# ── Base image ────────────────────────────────────────────────────────────────
 FROM --platform=$BUILDPLATFORM python:3.10-alpine AS builder
 
 WORKDIR /app
 
-COPY requirements.txt /app
+# Install dependencies first to leverage Docker layer caching
+COPY requirements.txt .
 RUN --mount=type=cache,target=/root/.cache/pip \
     pip3 install -r requirements.txt
 
-COPY . /app
+# Copy project files
+COPY . .
 
-ENTRYPOINT ["python3"]
-CMD ["app.py"]
+# ── Production ────────────────────────────────────────────────────────────────
+FROM builder AS production
 
-FROM builder as dev-envs
+ENV FLASK_ENV=production
 
-RUN <<EOF
-apk update
-apk add git
-EOF
+EXPOSE 8080
 
-RUN <<EOF
-addgroup -S docker
-adduser -S --shell /bin/bash --ingroup docker vscode
-EOF
-# install Docker tools (cli, buildx, compose)
-COPY --from=gloursdocker/docker / /
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "3", "--timeout", "60", "flask_app.app:app"]
+
+# ── Development ───────────────────────────────────────────────────────────────
+FROM builder AS development
+
+ENV FLASK_ENV=development
+
+EXPOSE 8080
+
+CMD ["python3", "-m", "flask", "--app", "app:app", "run", "--host=0.0.0.0", "--port=8080", "--debug"]
