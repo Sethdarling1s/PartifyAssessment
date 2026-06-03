@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Find the right parts for your vehicle with Partify's parts finder." />
+  <title>Partify Parts Finder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- Background texture -->
+  <div class="bg-grid" aria-hidden="true"></div>
+
+  <main class="page-wrapper">
+
+    <header class="site-header" aria-label="Site header">
+      <div class="logo-lockup">
+        <span class="logo-text">PARTIFY</span>
+        <span class="logo-tag">Parts Finder</span>
+      </div>
+    </header>
+
+    <section class="hero" aria-labelledby="hero-heading">
+      <h1 id="hero-heading" class="hero-title">
+        Find the right<br />part, first time.
+      </h1>
+      <p class="hero-sub">Select your vehicle below and we'll take you straight to your parts.</p>
+    </section>
+
+    <section class="finder-card" aria-label="Vehicle parts finder">
+
+      <div class="step-track" aria-hidden="true">
+        <span class="step active" data-step="1">Year</span>
+        <span class="step-divider"></span>
+        <span class="step" data-step="2">Make</span>
+        <span class="step-divider"></span>
+        <span class="step" data-step="3">Model</span>
+        <span class="step-divider"></span>
+        <span class="step" data-step="4">Part</span>
+      </div>
+
+      <div class="selects-grid">
+
+        <!-- Year -->
+        <div class="select-group" id="group-year">
+          <label class="select-label" for="select-year">Year</label>
+          <div class="select-wrapper">
+            <select id="select-year" name="year" aria-label="Select vehicle year" disabled>
+              <option value="">Loading...</option>
+            </select>
+            <span class="select-icon" aria-hidden="true">&#8595;</span>
+          </div>
+        </div>
+
+        <!-- Make -->
+        <div class="select-group" id="group-make">
+          <label class="select-label" for="select-make">Make</label>
+          <div class="select-wrapper">
+            <select id="select-make" name="make" aria-label="Select vehicle make" disabled>
+              <option value="">Select year first</option>
+            </select>
+            <span class="select-icon" aria-hidden="true">&#8595;</span>
+          </div>
+        </div>
+
+        <!-- Model -->
+        <div class="select-group" id="group-model">
+          <label class="select-label" for="select-model">Model</label>
+          <div class="select-wrapper">
+            <select id="select-model" name="model" aria-label="Select vehicle model" disabled>
+              <option value="">Select make first</option>
+            </select>
+            <span class="select-icon" aria-hidden="true">&#8595;</span>
+          </div>
+        </div>
+
+        <!-- Product Type -->
+        <div class="select-group" id="group-type">
+          <label class="select-label" for="select-type">
+            Part Type <span class="optional-tag">optional</span>
+          </label>
+          <div class="select-wrapper">
+            <select id="select-type" name="product_type" aria-label="Select part type (optional)" disabled>
+              <option value="">Select model first</option>
+            </select>
+            <span class="select-icon" aria-hidden="true">&#8595;</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="action-row">
+        <button id="search-btn" class="search-btn" disabled aria-label="Find parts for selected vehicle">
+          <span class="btn-text">Find My Parts</span>
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </button>
+        <p class="action-note" id="action-note" aria-live="polite"></p>
+      </div>
+
+    </section>
+
+    <footer class="site-footer">
+      <p>Powered by <a href="https://partifyusa.com" target="_blank" rel="noopener noreferrer">Partify USA</a></p>
+    </footer>
+
+  </main>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
