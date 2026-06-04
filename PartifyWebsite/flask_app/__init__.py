@@ -1,7 +1,10 @@
 from flask import Flask
 
 def create_app():
-	app = Flask(__name__)
-	with app.app_context():
-		from . import routes
-		return app
+    """Application factory: creates and configures the Flask app."""
+    app = Flask(__name__, template_folder="templates", static_folder="static")
+
+    from .routes import bp
+    app.register_blueprint(bp)
+
+    return app
