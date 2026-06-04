@@ -214,6 +214,10 @@ async function triggerSearch() {
   const type = typeSelect.value;
   if (!year || !make || !model) return;
 
+  // Disable button and show loading state while fetch is in flight
+  searchBtn.disabled = true;
+  searchBtn.querySelector(".btn-text").textContent = "Finding parts...";
+
 
   if (type) {
     const result = await fetchAPI(`/api/url?year=${encodeURIComponent(year)}&make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&product_type=${encodeURIComponent(type)}`);
@@ -226,10 +230,6 @@ async function triggerSearch() {
     if (!result) return;
     window.location.href = result.url;
   }
-
-  return;
-
-
 }
 
  
