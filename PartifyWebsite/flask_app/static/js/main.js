@@ -275,9 +275,24 @@ searchBtn.addEventListener("click", () => {
   triggerSearch();
 })
  
-// ── Entry point ───────────────────────────────────────────────────────────────
- 
-document.addEventListener("DOMContentLoaded", () => {
+// Handles both fresh page loads and back-button restores from bfcache.
+window.addEventListener("pageshow", () => {
+  // Reset all selects to their initial disabled state
+  yearSelect.innerHTML = `<option value="" disabled selected>Loading...</option>`;
+  resetSelect(makeSelect,  "Select year first");
+  resetSelect(modelSelect, "Select make first");
+  resetSelect(typeSelect,  "Select model first");
+
+  // Reset search button
+  searchBtn.disabled = true;
+  searchBtn.querySelector(".btn-text").textContent = "Find My Parts";
+
+  // Reset action note
+  setActionNote("");
+
+  // Reset step tracker
   updateStepTracker();
+
+  // Reload years from the API
   loadYears();
 });
