@@ -102,3 +102,47 @@ def get_product_types():
     product_types = filtered["Product Type"].dropna().unique().tolist()
     return jsonify(sorted(product_types))
 
+@bp.route("/api/url")
+def get_url():
+    """
+    Look up and return the Partify collection URL for a given vehicle and
+    optional product type. Year, make, and model are required. Product type
+    is optional — omitting it returns the base collection URL without a filter.
+ 
+    Query params: ?year=2015&make=RAM&model=1500&product_type=Front+Bumper
+    """
+    year         = request.args.get("year")
+    make         = request.args.get("make")
+    model        = request.args.get("model")
+    product_type = request.args.get("product_type")  # Optional
+ 
+    if not year or not make or not model:
+        return jsonify({"error": "Missing required query parameters: year, make, model"}), 400
+ 
+    filtered = df[
+        (df["Year"]  == year)  &
+        (df["Make"]  == make)  &
+        (df["Model"] == model)
+    ]
+ 
+    if filtered.empty:
+        return jsonify({"error": f"No data found for {year} {make} {model}"}), 404
+ 
+    if product_type:
+        # Match the specific product type row and return its URL directly.
+        # Using the CSV's URL column ensures the URL always matches what
+        # Partify expects, even if their format changes in the future.
+        match = filtered[filtered["Product Type"] == product_type]
+ 
+        if match.empty:
+            return jsonify({"error": f"Product type '{product_type}' not found for {year} {make} {model}"}), 404
+ 
+        url = match.iloc[0]["URL"]
+    else:
+        # No product type selected strip the query string from any row's URL
+        # to get the base collection URL (e.g. /collections/2015-RAM-1500).
+        url = filtered.iloc[0]["URL"].split("?")[0]
+    url = url.replace(" ", "+")
+    return jsonify({"url": url})
+
+

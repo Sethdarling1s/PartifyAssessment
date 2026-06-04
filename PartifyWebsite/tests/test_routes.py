@@ -145,6 +145,84 @@ def test_get_product_types_invalid_combination(client):
     response = client.get("/api/product-types?year=2015&make=RAM&model=Camry")
     assert response.status_code == 404
 
+# ── /api/url ──────────────────────────────────────────────────────────────────
+ 
+def test_get_url_with_product_type_status(client):
+    """URL endpoint returns 200 for a valid year, make, model, and product type."""
+    response = client.get("/api/url?year=2015&make=RAM&model=1500&product_type=Front Bumper")
+    assert response.status_code == 200
+ 
+ 
+def test_get_url_with_product_type_returns_url(client):
+    """URL endpoint returns a dict with a url key when product type is provided."""
+    response = client.get("/api/url?year=2015&make=RAM&model=1500&product_type=Front Bumper")
+    data = response.get_json()
+    assert "url" in data
+ 
+ 
+def test_get_url_with_product_type_points_to_partify(client):
+    """URL endpoint returns a URL pointing to partifyusa.com."""
+    response = client.get("/api/url?year=2015&make=RAM&model=1500&product_type=Front Bumper")
+    data = response.get_json()
+    assert "partifyusa.com" in data["url"]
+ 
+ 
+def test_get_url_with_product_type_includes_filter(client):
+    """URL endpoint includes product type filter in the URL when product type is provided."""
+    response = client.get("/api/url?year=2015&make=RAM&model=1500&product_type=Front Bumper")
+    data = response.get_json()
+    assert "filter.p.product_type" in data["url"]
+ 
+ 
+def test_get_url_without_product_type_status(client):
+    """URL endpoint returns 200 when product type is omitted."""
+    response = client.get("/api/url?year=2015&make=RAM&model=1500")
+    assert response.status_code == 200
+ 
+ 
+def test_get_url_without_product_type_has_no_query_string(client):
+    """URL endpoint returns a base collection URL with no query string when product type is omitted."""
+    response = client.get("/api/url?year=2015&make=RAM&model=1500")
+    data = response.get_json()
+    assert "?" not in data["url"]
+ 
+ 
+def test_get_url_toyota_combination(client):
+    """URL endpoint returns 200 for a valid Toyota combination."""
+    response = client.get("/api/url?year=2015&make=Toyota&model=Camry&product_type=Front+Bumper")
+    assert response.status_code == 200
+ 
+ 
+def test_get_url_missing_year(client):
+    """URL endpoint returns 400 when year parameter is missing."""
+    response = client.get("/api/url?make=RAM&model=1500")
+    assert response.status_code == 400
+ 
+ 
+def test_get_url_missing_make(client):
+    """URL endpoint returns 400 when make parameter is missing."""
+    response = client.get("/api/url?year=2015&model=1500")
+    assert response.status_code == 400
+ 
+ 
+def test_get_url_missing_model(client):
+    """URL endpoint returns 400 when model parameter is missing."""
+    response = client.get("/api/url?year=2015&make=RAM")
+    assert response.status_code == 400
+ 
+ 
+def test_get_url_invalid_vehicle(client):
+    """URL endpoint returns 404 for a vehicle combination not in the dataset."""
+    response = client.get("/api/url?year=2015&make=RAM&model=Corolla")
+    assert response.status_code == 404
+ 
+ 
+def test_get_url_invalid_product_type(client):
+    """URL endpoint returns 404 for a product type not available for the given vehicle."""
+    response = client.get("/api/url?year=2015&make=RAM&model=1500&product_type=Sunroof")
+    assert response.status_code == 404
+
+
  
 
 
