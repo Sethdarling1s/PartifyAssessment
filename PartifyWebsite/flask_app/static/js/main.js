@@ -103,7 +103,8 @@ async function fetchAPI(url) {
  * Called once on page load.
  */
 async function loadYears() {
-  yearSelect.innerHTML = `<option value="" disabled selected>Loading...</option>`;
+    searchBtn.disabled = true;
+    yearSelect.innerHTML = `<option value="" disabled selected>Loading...</option>`;
  
   const years = await fetchAPI("/api/years");
   if (!years) return;
@@ -180,7 +181,32 @@ async function loadProductTypes() {
  
   typeSelect.disabled = false;
 }
- 
+
+
+async function triggerSearch() {
+  const year  = yearSelect.value;
+  const make  = makeSelect.value;
+  const model = modelSelect.value;
+  const type = typeSelect.value;
+  if (!year || !make || !model) return;
+
+
+  if (type) {
+    const result = await fetchAPI(`/api/url?year=${encodeURIComponent(year)}&make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}&product_type=${encodeURIComponent(type)}`);
+    if (!result) return;
+    console.log(result.url);
+    window.location.href = result.url;
+  }
+  else {
+    const result = await fetchAPI(`/api/url?year=${encodeURIComponent(year)}&make=${encodeURIComponent(make)}&model=${encodeURIComponent(model)}`);
+    if (!result) return;
+    window.location.href = result.url;
+  }
+
+  return;
+
+
+}
 
  
 // ── Event listeners ───────────────────────────────────────────────────────────
@@ -217,6 +243,9 @@ typeSelect.addEventListener("change", () => {
   setActionNote("");
 });
 
+searchBtn.addEventListener("click", () => {
+  triggerSearch();
+})
  
 // ── Entry point ───────────────────────────────────────────────────────────────
  
