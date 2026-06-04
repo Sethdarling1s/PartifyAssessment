@@ -35,3 +35,70 @@ def get_years():
     years = df['Year'].dropna().unique().tolist()
     return jsonify(sorted(years, reverse=True))
 
+
+@bp.route("/api/makes")
+def get_makes():
+    """
+    Return sorted makes for a given year.
+    Query param: ?year=2015
+    """
+    year = request.args.get("year")
+ 
+    if not year:
+        return jsonify({"error": "Missing required query parameter: year"}), 400
+ 
+    filtered = df[df["Year"] == year]
+ 
+    if filtered.empty:
+        return jsonify({"error": f"No data found for year '{year}'"}), 404
+
+    makes = filtered["Make"].dropna().unique().tolist()
+    return jsonify(sorted(makes))
+ 
+ 
+@bp.route("/api/models")
+def get_models():
+    """
+    Return sorted models for a given year and make.
+    Query params: ?year=2015&make=RAM
+    """
+    year = request.args.get("year")
+    make = request.args.get("make")
+ 
+    if not year or not make:
+        return jsonify({"error": "Missing required query parameters: year, make"}), 400
+ 
+    filtered = df[(df["Year"] == year) & (df["Make"] == make)]
+ 
+    if filtered.empty:
+        return jsonify({"error": f"No data found for {year} {make}"}), 404
+ 
+    models = filtered["Model"].dropna().unique().tolist()
+    return jsonify(sorted(models))
+
+
+@bp.route("/api/product-types")
+def get_product_types():
+    """
+    Return sorted product types for a given year, make, and model.
+    Query params: ?year=2015&make=RAM&model=1500
+    """
+    year  = request.args.get("year")
+    make  = request.args.get("make")
+    model = request.args.get("model")
+ 
+    if not year or not make or not model:
+        return jsonify({"error": "Missing required query parameters: year, make, model"}), 400
+ 
+    filtered = df[
+        (df["Year"]  == year)  &
+        (df["Make"]  == make)  &
+        (df["Model"] == model)
+    ]
+ 
+    if filtered.empty:
+        return jsonify({"error": f"No data found for {year} {make} {model}"}), 404
+ 
+    product_types = filtered["Product Type"].dropna().unique().tolist()
+    return jsonify(sorted(product_types))
+
