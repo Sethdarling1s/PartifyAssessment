@@ -18,7 +18,7 @@ ENV FLASK_ENV=production
 
 EXPOSE 8080
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "3", "--timeout", "60", "flask_app.app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--workers", "3", "--timeout", "60", "app:app"]
 
 # ── Development ───────────────────────────────────────────────────────────────
 FROM builder AS development
