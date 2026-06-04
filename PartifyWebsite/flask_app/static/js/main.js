@@ -74,6 +74,30 @@ function updateSearchButton() {
   searchBtn.disabled = !ready;
 }
 
+/**
+ * Update the step tracker to reflect the current selection state.
+ * A step is 'done' when it has a value, 'active' when it is the next
+ * step the user should complete, and inactive otherwise.
+ */
+function updateStepTracker() {
+  const steps = document.querySelectorAll(".step");
+
+  // steps[0] = Year, steps[1] = Make, steps[2] = Model, steps[3] = Part
+  const values = [yearSelect.value, makeSelect.value, modelSelect.value, typeSelect.value];
+
+  steps.forEach((step, index) => {
+    step.classList.remove("active", "done");
+
+    if (values[index]) {
+      // This step has a value — mark it done
+      step.classList.add("done");
+    } else if (index === 0 || values[index - 1]) {
+      // This step is empty but the prior step is done mark it active
+      step.classList.add("active");
+    }
+  });
+}
+
  
 // ── API calls ─────────────────────────────────────────────────────────────────
  
@@ -219,6 +243,7 @@ yearSelect.addEventListener("change", () => {
   searchBtn.disabled = true;
   setActionNote("");
   loadMakes();
+  updateStepTracker();
 });
 
 
@@ -229,6 +254,7 @@ makeSelect.addEventListener("change", () => {
   searchBtn.disabled = true;
   setActionNote("");
   loadModels();
+  updateStepTracker();
 });
  
 modelSelect.addEventListener("change", () => {
@@ -237,10 +263,12 @@ modelSelect.addEventListener("change", () => {
   setActionNote("");
   updateSearchButton();
   loadProductTypes();
+  updateStepTracker();
 });
  
 typeSelect.addEventListener("change", () => {
   setActionNote("");
+  updateStepTracker();
 });
 
 searchBtn.addEventListener("click", () => {
@@ -249,4 +277,7 @@ searchBtn.addEventListener("click", () => {
  
 // ── Entry point ───────────────────────────────────────────────────────────────
  
-document.addEventListener("DOMContentLoaded", loadYears);
+document.addEventListener("DOMContentLoaded", () => {
+  updateStepTracker();
+  loadYears();
+});
