@@ -206,7 +206,9 @@ async function loadProductTypes() {
   typeSelect.disabled = false;
 }
 
-
+/**
+ * Sends the user to the appropriate url when the search button is pressed.
+ */
 async function triggerSearch() {
   const year  = yearSelect.value;
   const make  = makeSelect.value;
